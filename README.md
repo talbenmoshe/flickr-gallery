@@ -37,7 +37,7 @@ Each image has three buttons that appear on mouse hover. You need to make them w
 1. Responsive:  the gallery adjusts the size of each image so that all the images will fit into the screen without margin. However, when the window is resized, the images are not fitted so well. Make sure the images are always adjusted to the window width.
 2. Infinite Scroll: currently the gallery displays only 100 images. Create a mechanism that loads more images from flickr when the user is scrolling past the last image.
 3. Drag & Drop: let your users choose the order of the images by adding an option to drag & drop images to their new position.
-4. Implement virtual gallery. This means that an item should not render the image if it is not visible on the screen.
+4. Implement virtual list for the gallery. This means that an item should not render the image if it is not visible on the screen.
 
 ### Task 4 - Add a custom feature
 - This is your chance to get creative. Add a new, **cool and innovative** feature to the gallery. **Note:** All preceding tasks should still work.
