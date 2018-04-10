@@ -3,7 +3,7 @@
 Welcome to the Flickr Gallery application.
 This app is simple, you write a tag at the top and you get images from flickr with that tag.
 
-[![Build Status](https://travis-ci.org/guysopher/flickr-gallery.svg?branch=master)](https://travis-ci.org/guysopher/flickr-gallery)
+[![Build Status](https://travis-ci.org/talbenmoshe/flickr-gallery.svg?branch=master)](https://travis-ci.org/talbenmoshe/flickr-gallery)
 
 
 ## Getting Started
