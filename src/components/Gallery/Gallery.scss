@@ -1,0 +1,138 @@
+@import '../../styles/variables';
+
+.gallery-root {
+  position: relative;
+  text-align: center;
+}
+
+.gallery-header {
+  background-color: $dark-grey;
+  padding: 10px;
+  color: white;
+  font-size: 20pt;
+}
+
+.gallery-intro {
+  font-size: 15pt;
+}
+
+.btn-scroll {
+  position: fixed;
+  right: 10px;
+  height: 40px;
+  width: 40px;
+  z-index: 999;
+  background-color: $dark-grey;
+  opacity: 1;
+  color: $white-color;
+  border: none;
+  border-radius: 50%;
+  font-size: 30px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+
+    span {
+      opacity: 0.6;
+    }
+  }
+
+  &.btn-up {
+    top: 40%;
+    margin-top: -20px;
+  }
+
+  &.btn-center {
+    top: 50%;
+    margin-top: -20px;
+  }
+
+  &.btn-down {
+    top: 60%;
+    margin-top: -20px;
+  }
+}
+
+.modal-root {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  outline: none;
+
+  .modal-body {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 50px;
+
+    .background-holder {
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-title {
+      color: $white-color;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .btn-close-modal {
+      position: absolute;
+      top: 20px;
+      right: 10px;
+      border-radius: 20px;
+      height: 25px;
+      width: 25px;
+      margin-top: -12.5px;
+      color: $white-color;
+      background: none;
+      border: 1px solid $white-color;
+      cursor: pointer;
+
+      &:hover {
+        color: $silver-color;
+      }
+    }
+
+    .btn-navigate {
+      position: absolute;
+      top: 50%;
+      border-radius: 20px;
+      height: 25px;
+      width: 25px;
+      color: $white-color;
+      background: none;
+      border: 1px solid $white-color;
+      cursor: pointer;
+
+      &:hover {
+        color: $silver-color;
+      }
+
+      &.btn-right {
+        right: 10px;
+      }
+
+      &.btn-left {
+        left: 10px;
+      }
+    }
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: $faded-black;
+  z-index: 999;
+}
