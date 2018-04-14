@@ -318,6 +318,7 @@ class Gallery extends React.Component {
             <FontAwesome name="angle-down"
                          title="scroll to bottom"/>
           </button>) : null }
+        {this.props.tag ? (this.state.isLoadingImages ? 'Fetching images...' : this.state.images.length === 0 ? 'no images found' : null) : null}
         {this.state.images.map(dto => {
             return <Image key={'image-' + dto.id}
                           dto={dto}
