@@ -64,7 +64,9 @@
   }
 
   &:hover .image-controls,
-  &:hover .share-controls{
+  &:hover .share-controls,
+  &:active .image-controls,
+  &:active .share-controls {
     visibility: visible;
   }
 
