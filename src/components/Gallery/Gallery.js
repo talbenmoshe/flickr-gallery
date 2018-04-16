@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import FontAwesome from 'react-fontawesome'
 import Modal from 'react-modal';
 import axios from 'axios';
+import LazyLoad from 'react-lazyload';
 import { reject, unionBy, findIndex, map } from 'lodash';
 
 import config from '../../config/base';
 import Image from '../Image';
 import './Gallery.scss';
-
-Modal.setAppElement('#app');
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -32,6 +31,8 @@ class Gallery extends React.Component {
     const apiParams = this.getApiParams();
     const galleryWidth = this.getGalleryWidth();
 
+    this.searchInterval = null;
+
     this.state = {
       isLoadingImages: true,
       canLoadMoreImages: true,
@@ -39,7 +40,6 @@ class Gallery extends React.Component {
       galleryWidth: galleryWidth,
       page: 1,
       draggedImage: null,
-      searchInterval: null,
       scrolledToThird: false,
       apiParams: apiParams,
       isModalOpened: false,
@@ -49,6 +49,7 @@ class Gallery extends React.Component {
   }
 
   componentDidMount() {
+    Modal.setAppElement('body');
     this.getImages(this.props.tag);
     window.addEventListener('scroll', this.handleMouseScroll);
     window.addEventListener('resize', this.updateGalleryWidth);
@@ -105,9 +106,9 @@ class Gallery extends React.Component {
   }
 
   getImages(tag) {
-    clearInterval(this.state.searchInterval);
-    const searchInterval = setTimeout(() => {
-      const params = this.getApiParams();
+    clearInterval(this.searchInterval);
+    this.searchInterval = setTimeout(() => {
+      const params = this.state.apiParams;
 
       axios.get(`${config.API_URL}${params}&tags=${tag}&page=${this.state.page}`)
         .then(response => {
@@ -129,10 +130,6 @@ class Gallery extends React.Component {
           });
         });
     }, 250);
-
-    this.setState({
-      searchInterval: searchInterval
-    });
   }
 
   urlFromDto(dto) {
@@ -159,6 +156,11 @@ class Gallery extends React.Component {
     const clientHeight = (document.documentElement && document.documentElement.clientHeight) || document.body.clientHeight;
 
     return scrollHeight > clientHeight;
+  }
+
+  isScrolledIntoView(el) {
+    const {top, bottom} = el.getBoundingClientRect();
+    return top >= 0 && bottom <= window.innerHeight;
   }
 
   handleImageRemoved(imageId) {
@@ -319,15 +321,20 @@ class Gallery extends React.Component {
                          title="scroll to bottom"/>
           </button>) : null }
         {this.props.tag ? (this.state.isLoadingImages ? 'Fetching images...' : this.state.images.length === 0 ? 'no images found' : null) : null}
-        {this.state.images.map(dto => {
-            return <Image key={'image-' + dto.id}
-                          dto={dto}
-                          galleryWidth={this.state.galleryWidth}
-                          draggedImage={this.state.draggedImage}
-                          onImageRotated={this.handleImageRotated}
-                          onImageMaximized={this.handleImageMaximized}
-                          onImageRemoved={this.handleImageRemoved}
-                          onImageDragged={this.setDraggedImage}/>;
+        {this.state.images.map((dto, key) => {
+            return <LazyLoad key={key}
+                             height={20}
+                             offset={100}
+                             once>
+              <Image key={'image-' + dto.id}
+                     dto={dto}
+                     galleryWidth={this.state.galleryWidth}
+                     draggedImage={this.state.draggedImage}
+                     onImageRotated={this.handleImageRotated}
+                     onImageMaximized={this.handleImageMaximized}
+                     onImageRemoved={this.handleImageRemoved}
+                     onImageDragged={this.setDraggedImage}/>
+            </LazyLoad>
           })
         }
         {this.state.activeImage ? (

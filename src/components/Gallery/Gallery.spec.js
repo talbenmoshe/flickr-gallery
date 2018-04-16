@@ -2,6 +2,7 @@ import React from 'react';
 import {mount} from 'enzyme';
 import {expect} from 'chai';
 import moxios from 'moxios';
+import LazyLoad from 'react-lazyload';
 import Gallery from './Gallery.js';
 import Image from '../Image';
 
@@ -43,12 +44,25 @@ describe('Gallery', () => {
     expect(wrapper).to.not.be.undefined;
   });
 
-  it('renders all images on the state', done => {
+  it('render some images', (done) => {
     wrapper.setState({
       images: initialImages
     }, () => {
-      expect(wrapper.find(Image)).to.have.length(initialImages.length);
+      expect(wrapper.find(Image).length).not.to.be.null;
       done();
     });
+  });
+
+  it('change state images', done => {
+    wrapper.setState({
+      images: initialImages
+    }, () => {
+      expect(wrapper.state.images).not.to.be.null;
+      done();
+    });
+  });
+
+  it('renders LazyLoad component', () => {
+    expect(wrapper.find(LazyLoad)).not.to.be.null;
   });
 });

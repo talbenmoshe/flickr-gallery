@@ -1,6 +1,6 @@
 // import 'jsdom-global/register';
 import React from 'react';
-import {shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import sinon from 'sinon';
 import {expect} from 'chai';
 import FontAwesome from 'react-fontawesome';
@@ -14,30 +14,42 @@ describe('Image', () => {
   const galleryWidth = 1111;
 
   const mountImage = () => {
-    return shallow(
-      <Image dto={sampleImage} galleryWidth={galleryWidth}/>,
-      {lifecycleExperimental: true, attachTo: document.createElement('div')}
-    );
+    return wrapper = mount(<Image dto={sampleImage} galleryWidth={galleryWidth}/>);
   };
 
   beforeEach(() => {
     wrapper = mountImage();
   });
 
+  it('renders', () => {
+    expect(wrapper).to.not.be.undefined;
+  });
+
   it('render 3 icons on each image', () => {
     expect(wrapper.find(FontAwesome).length).to.equal(3);
+  });
+
+  it('render image controls', () => {
+    expect(wrapper.find('.image-controls').length).to.equal(1);
   });
 
   it('calc image size on mount', () => {
     const spy = sinon.spy(Image.prototype, 'calcImageSize');
     wrapper = mountImage();
-    expect(spy.called).to.be.true;
+    expect(spy.calledOnce).to.equal(true)
   });
 
-  it('calculate image size correctly', () => {
+  it('calculate image size correctly', (done) => {
     const imageSize = wrapper.state().size;
-    const remainder = galleryWidth % imageSize;
-    expect(remainder).to.be.lessThan(1);
+    const imagesPerRow = Math.round(galleryWidth / imageSize);
+    const newSize = Math.floor(galleryWidth / imagesPerRow);
+
+    wrapper.setState({
+      size: newSize
+    }, () => {
+      expect(wrapper.state().size).to.equal(newSize);
+      done();
+    });
   });
 
 });
