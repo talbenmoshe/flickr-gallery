@@ -76,11 +76,15 @@
   "dependencies": {
     "axios": "^0.17.1",
     "core-js": "^2.0.0",
+    "lodash": "^4.17.5",
     "node-sass": "^4.7.2",
     "normalize.css": "^4.0.0",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
-    "react-fontawesome": "^1.6.1"
+    "react-fontawesome": "^1.6.1",
+    "react-lazyload": "^2.3.0",
+    "react-modal": "^3.3.2",
+    "react-share": "^2.1.1"
   },
   "gh-pages-deploy": {
     "staticpath": "dist",

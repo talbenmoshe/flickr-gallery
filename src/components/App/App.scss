@@ -1,6 +1,12 @@
+@import '../../styles/variables';
+
 body, html {
   padding: 0;
   margin: 0;
+}
+
+.ReactModal__Body--open {
+  overflow: hidden;
 }
 
 .app-root {
@@ -8,19 +14,23 @@ body, html {
 }
 
 .app-header {
-  background-color: #222;
+  background-color: $dark-grey;
   padding: 10px;
-  color: white;
+  color: $white-color;
   font-size: 20pt;
 }
 
 .app-input {
   line-height: 30px;
-  border: 1px solid #ccc;
+  border: 1px solid $silver-color;
   border-radius: 4px;
   font-size: 14px;
   padding: 0 8px;
-  color: #666;
-  width: 400px;
+  color: $grey;
+  width: 90%;
   margin-bottom: 30px;
+
+  @media screen and (min-width: $mobile_break_point) {
+    width: 400px;
+  }
 }
