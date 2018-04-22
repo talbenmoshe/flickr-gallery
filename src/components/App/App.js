@@ -8,9 +8,17 @@ class App extends React.Component {
 
   constructor() {
     super();
+
+    let last_search = localStorage.getItem('last_search');
     this.state = {
-      tag: 'art'
+      tag: last_search || ''
     };
+  }
+
+  tagChange(event) {
+    let tag = event.target.value;
+    this.setState({tag: tag});
+    localStorage.setItem('last_search', tag);
   }
 
   render() {
@@ -18,7 +26,7 @@ class App extends React.Component {
       <div className="app-root">
         <div className="app-header">
           <h2>Flickr Gallery</h2>
-          <input className="app-input" onChange={event => this.setState({tag: event.target.value})} value={this.state.tag}/>
+          <input className="app-input" onChange={this.tagChange.bind(this)} value={this.state.tag}/>
         </div>
         <Gallery tag={this.state.tag}/>
       </div>

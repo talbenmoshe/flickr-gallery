@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Image from '../Image';
 import './Gallery.scss';
+import flicker from '../../flicker'
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -25,7 +26,15 @@ class Gallery extends React.Component {
   }
 
   getImages(tag) {
-    // TODO: Get images from Flickr
+    flicker.searchByTags(tag).then(res => {
+      this.setState({
+        images: res.data.photos.photo
+      });
+    }).catch(err => {
+      this.setState({
+        error: err
+      });
+    });
   }
 
   componentDidMount() {
