@@ -12,3 +12,13 @@
 .gallery-intro {
   font-size: 15pt;
 }
+
+.modal-close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border-radius: 50%;
+  background-color: #222;
+  color: #fff;
+  z-index: 2;
+}
