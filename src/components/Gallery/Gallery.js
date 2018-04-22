@@ -4,6 +4,7 @@ import Image from '../Image';
 import './Gallery.scss';
 import flicker from '../../flicker'
 import Modal from 'react-modal';
+import Measure from 'react-measure';
 
 Modal.setAppElement('#app');
 
@@ -16,20 +17,12 @@ class Gallery extends React.Component {
     super(props);
     this.state = {
       images: [],
-      galleryWidth: this.getGalleryWidth(),
+      imageSize: 200,
       modalIsOpen: false,
       modalTitle: '',
       modalImage: '',
       modalRotation: 0
     };
-  }
-
-  getGalleryWidth(){
-    try {
-      return document.body.clientWidth;
-    } catch (e) {
-      return 1000;
-    }
   }
 
   getImages(tag) {
@@ -59,15 +52,19 @@ class Gallery extends React.Component {
     });
   }
 
+  onResize(contentRect) {
+    let width = contentRect.bounds.width;
+    let columns = Math.floor(width / 200);
+    let imageSize = width / columns;
+    this.setState({ imageSize: imageSize })
+  }
+
   closeModal() {
     this.setState({modalIsOpen: false});
   }
 
   componentDidMount() {
     this.getImages(this.props.tag);
-    this.setState({
-      galleryWidth: document.body.clientWidth
-    });
   }
 
   componentWillReceiveProps(props) {
@@ -76,22 +73,30 @@ class Gallery extends React.Component {
 
   render() {
     return (
-      <div className="gallery-root">
-        {this.state.images.map(dto => {
-          return <Image key={'image-' + dto.id} dto={dto} galleryWidth={this.state.galleryWidth}
-                        onDelete={this.deleteImage.bind(this)} onExpand={this.onExpand.bind(this)}/>;
-        })}
+      <Measure bounds onResize={this.onResize.bind(this)}>
+        {
+          ({measureRef}) => {
+            return <div ref={measureRef} className="gallery-root">
+              {
+                this.state.images.map(dto => {
+                  return <Image key={'image-' + dto.id} dto={dto} size={this.state.imageSize}
+                                onDelete={this.deleteImage.bind(this)} onExpand={this.onExpand.bind(this)}/>;
+                })
+              }
 
-        <Modal
-          isOpen={this.state.modalIsOpen}
-          onRequestClose={this.closeModal.bind(this)}
-          contentLabel={this.state.modalTitle}>
-          <button className="modal-close" onClick={this.closeModal.bind(this)}>x</button>
-          <img src={this.state.modalImage} width="100%" height="100%" style={{
-              transform: `rotate(${this.state.modalRotation}deg)`
-            }}/>
-        </Modal>
-      </div>
+              <Modal
+                isOpen={this.state.modalIsOpen}
+                onRequestClose={this.closeModal.bind(this)}
+                contentLabel={this.state.modalTitle}>
+                <button className="modal-close" onClick={this.closeModal.bind(this)}>x</button>
+                <img src={this.state.modalImage} width="100%" height="100%" style={{
+                  transform: `rotate(${this.state.modalRotation}deg)`
+                }}/>
+              </Modal>
+            </div>
+          }
+        }
+      </Measure>
     );
   }
 }
