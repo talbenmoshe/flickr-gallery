@@ -6,8 +6,10 @@ import flicker from '../../flicker'
 import Modal from 'react-modal';
 import Measure from 'react-measure';
 import InfiniteScroll from 'react-infinite-scroller';
+import RGL, { WidthProvider } from 'react-grid-layout';
 
 Modal.setAppElement('#app');
+const ReactGridLayout = WidthProvider(RGL);
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -24,8 +26,11 @@ class Gallery extends React.Component {
       modalTitle: '',
       modalImage: '',
       modalRotation: 0,
+      loading: false,
       page: 0,
-      pages: 1
+      pages: 1,
+      columns: 1,
+      layout: []
     };
   }
 
@@ -50,13 +55,23 @@ class Gallery extends React.Component {
         delete this.queue[page];
         this.addImages(pageArgs.pages, page, pageArgs.photos);
       }
+
+      this.setState({layout: this.getLayout()});
     });
   }
 
   getImages(tag, page) {
+    if (!tag) return;
+    this.setState({loading: true});
+
     flicker.searchByTags(tag, page)
-      .then(({data: {photos: {pages, page, photo}}}) => this.addImages(pages, page, photo))
-      .catch(err => this.setState({error: err}));
+      .then(({data: {photos: {pages, page, photo}}}) => {
+        this.addImages(pages, page, photo);
+        this.setState({loading: false});
+      })
+      .catch(err => {
+        this.setState({error: err, loading: false});
+      });
   }
 
   deleteImage(image) {
@@ -78,7 +93,9 @@ class Gallery extends React.Component {
     let width = contentRect.bounds.width;
     let columns = Math.floor(width / 200);
     let imageSize = width / columns;
-    this.setState({ imageSize: imageSize })
+    this.setState({imageSize, columns}, () => {
+      this.setState({layout: this.getLayout()});
+    });
   }
 
   closeModal() {
@@ -96,24 +113,51 @@ class Gallery extends React.Component {
     }, () => this.getImages(props.tag, 1));
   }
 
+  getLayout() {
+    let columns = this.state.columns;
+    return this.state.images.map((image, i) => {
+      return {
+        i: i.toString(),
+        x: Math.floor(i % columns),
+        y: Math.floor(i / columns),
+        w: 1,
+        h: 1,
+        isDraggable: true,
+        isResizable: true
+      };
+    });
+  }
+
   render() {
     return (
       <InfiniteScroll
         pageStart={0}
-        loadMore={this.loadMore.bind(this)}
-        hasMore={this.state.page < this.state.pages}
+        loadMore={!this.state.loading ? this.loadMore.bind(this) : ()=>{}}
+        hasMore={!this.state.loading && this.state.page < this.state.pages}
         loader={<div className="loader" key={0}>Loading ...</div>}
       >
         <Measure bounds onResize={this.onResize.bind(this)}>
           {
             ({measureRef}) => {
               return <div ref={measureRef} className="gallery-root">
-                {
-                  this.state.images.map(dto => {
-                    return <Image key={'image-' + dto.id} dto={dto} size={this.state.imageSize}
-                                  onDelete={this.deleteImage.bind(this)} onExpand={this.onExpand.bind(this)}/>;
-                  })
-                }
+                <ReactGridLayout
+                  className="layout"
+                  margin={[0, 0]}
+                  layout={this.state.layout}
+                  rowHeight={this.state.imageSize}
+                  items={this.state.images.length}
+                  cols={this.state.columns}
+                >
+                  {
+                    this.state.images.map((dto, i) => {
+                      return <div key={i} data-grid={this.state.layout[i]}>
+                        <Image key={dto.id} dto={dto} size={this.state.imageSize}
+                               onDelete={this.deleteImage.bind(this)}
+                               onExpand={this.onExpand.bind(this)}/>
+                      </div>
+                    })
+                  }
+                </ReactGridLayout>
 
                 <Modal
                   isOpen={this.state.modalIsOpen}
