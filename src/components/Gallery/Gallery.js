@@ -20,9 +20,14 @@ const SortableItem = SortableElement(({value, handleImageRemoved, handleImageExp
   </li>
 );
 
-const SortableList = SortableContainer(({items, handleImageRemoved, handleImageExpand, galleryWidth}) => {
+const SortableList = SortableContainer(({items, handleImageRemoved, handleImageExpand, galleryWidth, beforeHolderHeight, afterHolderHeight}) => {
   return (
-    <ul>
+    <ul className="SortableList">
+      <li
+        className="SortableListFake"
+        style={{
+          height: `${beforeHolderHeight}px`
+        }}/>
       {items.map((value, index) => (
         <SortableItem key={`item-${index}`}
                       index={index}
@@ -32,6 +37,11 @@ const SortableList = SortableContainer(({items, handleImageRemoved, handleImageE
                       elementHeight={40}
                       value={value}/>
       ))}
+      <li
+        className="SortableListFake"
+        style={{
+          height: `${afterHolderHeight}px`
+        }}/>
     </ul>
   );
 });
@@ -48,7 +58,8 @@ class Gallery extends React.Component {
       galleryWidth: this.getGalleryWidth(),
       isGalleryModalOpen: false,
       photoIndex: 0,
-      isLoading: false
+      isLoading: false,
+      scrollY: 0
     };
 
     this.handleImageRemoved = this.handleImageRemoved.bind(this);
@@ -56,6 +67,7 @@ class Gallery extends React.Component {
     this.onSortEnd = this.onSortEnd.bind(this);
     this.onResize = this.onResize.bind(this);
     this.onScroll = this.onScroll.bind(this);
+    this.getVisibleItems = this.getVisibleItems.bind(this);
   }
 
   getGalleryWidth() {
@@ -122,15 +134,52 @@ class Gallery extends React.Component {
   }
 
   getVisibleItems() {
+    const {images, scrollY, galleryWidth} = this.state;
 
+    if (!images || images.length === 0) {
+      return;
+    }
+
+    const targetSize = 200;
+    const rowHeight = targetSize;
+    const imagesPerRow = Math.round(galleryWidth / targetSize);
+    let firstVisibleRow = Math.round(scrollY / rowHeight);
+    let lastVisibleRow = Math.round((window.innerHeight + scrollY) / rowHeight);
+
+    for (let i = 2; i > 0; --i) {
+      if (firstVisibleRow == 0) {
+        break;
+      }
+      firstVisibleRow -= 1;
+    }
+
+    for (let i = 1; i < 2; ++i) {
+      if (lastVisibleRow >= images.length - 1) {
+        break;
+      }
+
+      lastVisibleRow += 1;
+    }
+
+    const totalNumberOfRows = Math.round(images.length / imagesPerRow);
+
+    return {
+      images: images.slice((firstVisibleRow * imagesPerRow), (lastVisibleRow * imagesPerRow)),
+      beforeHolderHeight: firstVisibleRow * rowHeight,
+      afterHolderHeight: (totalNumberOfRows - lastVisibleRow) * rowHeight
+    };
   }
 
   onScroll() {
     const {images, isLoading} = this.state;
 
-    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 1000) && images.length && !isLoading) {
+    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 300) && images.length && !isLoading) {
       this.getImages(this.props.tag, false);
     }
+
+    this.setState({
+      scrollY: window.scrollY
+    });
   }
 
   handleImageRemoved(id) {
@@ -162,16 +211,22 @@ class Gallery extends React.Component {
     const {photoIndex, isGalleryModalOpen, isLoading} = this.state;
 
     const imagesSrc = this.state.images.map(dto => dto.url);
+    const visibleItems = this.getVisibleItems();
 
     return (
       <div className="gallery-root">
         {this.state.images && this.state.images.length && (
-          <SortableList items={this.state.images}
-                        galleryWidth={this.state.galleryWidth}
-                        handleImageExpand={this.handleImageExpand}
-                        axis='xy'
-                        handleImageRemoved={this.handleImageRemoved}
-                        onSortEnd={this.onSortEnd}/>
+          <div>
+
+            <SortableList items={visibleItems.images}
+                          galleryWidth={this.state.galleryWidth}
+                          handleImageExpand={this.handleImageExpand}
+                          axis='xy'
+                          handleImageRemoved={this.handleImageRemoved}
+                          onSortEnd={this.onSortEnd}
+                          afterHolderHeight={visibleItems.afterHolderHeight}
+                          beforeHolderHeight={visibleItems.beforeHolderHeight}/>
+          </div>
         )}
         {isLoading && (
           <div className="is-loading">

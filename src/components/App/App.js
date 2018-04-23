@@ -1,4 +1,6 @@
 import React from 'react';
+import randomWords from 'random-words';
+
 import './App.scss';
 import Gallery from '../Gallery';
 import Storage from '../Storage';
@@ -14,6 +16,7 @@ class App extends React.Component {
       tag: Storage.getData('tags') || 'art'
     };
 
+    this.tryLuck = this.tryLuck.bind(this);
     this.handleTagInputChange = this.handleTagInputChange.bind(this);
   }
 
@@ -25,11 +28,14 @@ class App extends React.Component {
 
     clearInterval(this.searchInterval);
     this.searchInterval = setTimeout(() => {
-      console.log("tags", tags);
       this.setState({
         tag: tags
       });
     }, 500);
+  }
+
+  tryLuck() {
+    this.handleTagInputChange(randomWords());
   }
 
   render() {
@@ -40,6 +46,10 @@ class App extends React.Component {
           <input className="app-input"
                  onChange={event => this.handleTagInputChange(event.target.value)}
                  value={this.state.tagInput}/>
+          <button className="btn-try-luck"
+                  onClick={this.tryLuck}>
+            Try my luck!
+          </button>
         </div>
         <Gallery tag={this.state.tag}/>
       </div>
