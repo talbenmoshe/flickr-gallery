@@ -2,12 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Lightbox from 'react-image-lightbox';
 import FontAwesome from 'react-fontawesome';
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 import Image from '../Image';
 import './Gallery.scss';
 import {getImages} from '../APIS';
 
 const PER_PAGE = 100;
+
+const SortableItem = SortableElement(({value, handleImageRemoved, handleImageExpand, galleryWidth}) =>
+  <li className="SortableItem">
+    <Image key={'image-' + value.id}
+           dto={value}
+           onImageRemoved={handleImageRemoved}
+           onImageExpand={handleImageExpand}
+           galleryWidth={galleryWidth}/>
+  </li>
+);
+
+const SortableList = SortableContainer(({items, handleImageRemoved, handleImageExpand, galleryWidth}) => {
+  return (
+    <ul>
+      {items.map((value, index) => (
+        <SortableItem key={`item-${index}`}
+                      index={index}
+                      galleryWidth={galleryWidth}
+                      handleImageExpand={handleImageExpand}
+                      handleImageRemoved={handleImageRemoved}
+                      elementHeight={40}
+                      value={value}/>
+      ))}
+    </ul>
+  );
+});
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -26,6 +53,7 @@ class Gallery extends React.Component {
 
     this.handleImageRemoved = this.handleImageRemoved.bind(this);
     this.handleImageExpand = this.handleImageExpand.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
     this.onResize = this.onResize.bind(this);
     this.onScroll = this.onScroll.bind(this);
   }
@@ -93,6 +121,10 @@ class Gallery extends React.Component {
     });
   }
 
+  getVisibleItems() {
+
+  }
+
   onScroll() {
     const {images, isLoading} = this.state;
 
@@ -120,6 +152,12 @@ class Gallery extends React.Component {
     })
   }
 
+  onSortEnd({oldIndex, newIndex}) {
+    this.setState({
+      images: arrayMove(this.state.images, oldIndex, newIndex),
+    })
+  }
+
   render() {
     const {photoIndex, isGalleryModalOpen, isLoading} = this.state;
 
@@ -127,13 +165,14 @@ class Gallery extends React.Component {
 
     return (
       <div className="gallery-root">
-        {this.state.images.map(dto => {
-          return <Image key={'image-' + dto.id}
-                        dto={dto}
-                        onImageRemoved={this.handleImageRemoved}
-                        onImageExpand={this.handleImageExpand}
-                        galleryWidth={this.state.galleryWidth}/>;
-        })}
+        {this.state.images && this.state.images.length && (
+          <SortableList items={this.state.images}
+                        galleryWidth={this.state.galleryWidth}
+                        handleImageExpand={this.handleImageExpand}
+                        axis='xy'
+                        handleImageRemoved={this.handleImageRemoved}
+                        onSortEnd={this.onSortEnd}/>
+        )}
         {isLoading && (
           <div className="is-loading">
             <FontAwesome name="spinner spin"

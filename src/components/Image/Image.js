@@ -58,7 +58,7 @@ class Image extends React.Component {
       <div className="image-root"
            style={{
              width: this.state.size + 'px',
-             height: this.state.size + 'px'
+             height: '200px'
            }}>
         <div className="image-holder"
              style={{
