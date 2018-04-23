@@ -1,7 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Lightbox from 'react-image-lightbox';
+import FontAwesome from 'react-fontawesome';
+
 import Image from '../Image';
 import './Gallery.scss';
+import {getImages} from '../APIS';
+
+const PER_PAGE = 100;
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -12,11 +18,19 @@ class Gallery extends React.Component {
     super(props);
     this.state = {
       images: [],
-      galleryWidth: this.getGalleryWidth()
+      galleryWidth: this.getGalleryWidth(),
+      isGalleryModalOpen: false,
+      photoIndex: 0,
+      isLoading: false
     };
+
+    this.handleImageRemoved = this.handleImageRemoved.bind(this);
+    this.handleImageExpand = this.handleImageExpand.bind(this);
+    this.onResize = this.onResize.bind(this);
+    this.onScroll = this.onScroll.bind(this);
   }
 
-  getGalleryWidth(){
+  getGalleryWidth() {
     try {
       return document.body.clientWidth;
     } catch (e) {
@@ -24,27 +38,127 @@ class Gallery extends React.Component {
     }
   }
 
-  getImages(tag) {
-    // TODO: Get images from Flickr
+  getImages(tag, forceReset) {
+    this.setState({
+      isLoading: true
+    });
+
+    const currentPage = forceReset ? 1 : (this.state.images.length / PER_PAGE) + 1;
+
+    if (forceReset) {
+      this.setState({
+        images: []
+      })
+    }
+
+    getImages(tag, currentPage, PER_PAGE)
+      .then((res) => {
+
+        const totalImages = this.state.images.concat(res.images);
+
+        this.setState({
+          images: totalImages,
+          isLoading: false
+        });
+
+      });
   }
 
   componentDidMount() {
-    this.getImages(this.props.tag);
+    this.getImages(this.props.tag, true);
+
+    this.setState({
+      galleryWidth: document.body.clientWidth
+    });
+
+    window.addEventListener('scroll', this.onScroll);
+    window.addEventListener('resize', this.onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('scroll', this.onScroll);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const {tag} = this.props;
+    if (nextProps.tag != tag) {
+      this.getImages(nextProps.tag, true);
+    }
+  }
+
+  onResize() {
     this.setState({
       galleryWidth: document.body.clientWidth
     });
   }
 
-  componentWillReceiveProps(props) {
-    this.getImages(props.tag);
+  onScroll() {
+    const {images, isLoading} = this.state;
+
+    if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 1000) && images.length && !isLoading) {
+      this.getImages(this.props.tag, false);
+    }
+  }
+
+  handleImageRemoved(id) {
+    const {images} = this.state;
+
+    this.setState({
+      images: images.filter(image => image.id != id)
+    });
+  }
+
+  handleImageExpand(id) {
+    const {images} = this.state;
+    const imageIndex = images.findIndex(image => {
+      return image.id == id;
+    });
+    this.setState({
+      photoIndex: imageIndex,
+      isGalleryModalOpen: true
+    })
   }
 
   render() {
+    const {photoIndex, isGalleryModalOpen, isLoading} = this.state;
+
+    const imagesSrc = this.state.images.map(dto => dto.url);
+
     return (
       <div className="gallery-root">
         {this.state.images.map(dto => {
-          return <Image key={'image-' + dto.id} dto={dto} galleryWidth={this.state.galleryWidth}/>;
+          return <Image key={'image-' + dto.id}
+                        dto={dto}
+                        onImageRemoved={this.handleImageRemoved}
+                        onImageExpand={this.handleImageExpand}
+                        galleryWidth={this.state.galleryWidth}/>;
         })}
+        {isLoading && (
+          <div className="is-loading">
+            <FontAwesome name="spinner spin"
+                         spin
+                         title="loading"/>
+          </div>
+        )}
+        {isGalleryModalOpen && (
+          <Lightbox
+            mainSrc={imagesSrc[photoIndex]}
+            nextSrc={imagesSrc[(photoIndex + 1) % imagesSrc.length]}
+            prevSrc={imagesSrc[(photoIndex + imagesSrc.length - 1) % imagesSrc.length]}
+            onCloseRequest={() => this.setState({isGalleryModalOpen: false})}
+            onMovePrevRequest={() =>
+              this.setState({
+                photoIndex: (photoIndex + imagesSrc.length - 1) % imagesSrc.length,
+              })
+            }
+            onMoveNextRequest={() =>
+              this.setState({
+                photoIndex: (photoIndex + 1) % imagesSrc.length,
+              })
+            }
+          />
+        )}
       </div>
     );
   }
