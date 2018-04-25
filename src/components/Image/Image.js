@@ -21,17 +21,20 @@ class Image extends React.Component {
     return `https://farm${dto.farm}.staticflickr.com/${dto.server}/${dto.id}_${dto.secret}.jpg`;
   }
 
-  onDelete() {
+  onDelete(e) {
+    e.stopPropagation();
     this.props.onDelete(this.props.dto);
   }
 
-  onRotate() {
+  onRotate(e) {
+    e.stopPropagation();
     this.setState({
       rotation: (this.state.rotation + 90) % 360
     });
   }
 
-  onExpand() {
+  onExpand(e) {
+    e.stopPropagation();
     this.props.onExpand({
       title: this.props.dto.title,
       link: this.urlFromDto(this.props.dto),
@@ -50,9 +53,9 @@ class Image extends React.Component {
                transform: `rotate(${this.state.rotation}deg)`
              }}/>
         <div>
-          <FontAwesome className="image-icon" name="sync-alt" title="rotate" onClick={::this.onRotate}/>
-          <FontAwesome className="image-icon" name="trash-alt" title="delete" onClick={::this.onDelete}/>
-          <FontAwesome className="image-icon" name="expand" title="expand" onClick={::this.onExpand}/>
+          <FontAwesome className="image-icon" name="sync-alt" title="rotate" onMouseDown={::this.onRotate}/>
+          <FontAwesome className="image-icon" name="trash-alt" title="delete" onMouseDown={::this.onDelete}/>
+          <FontAwesome className="image-icon" name="expand" title="expand" onMouseDown={::this.onExpand}/>
         </div>
       </div>
     );

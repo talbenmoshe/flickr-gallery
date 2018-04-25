@@ -141,7 +141,7 @@ class Gallery extends React.Component {
                 >
                   {
                     this.state.images.map((dto, i) => {
-                      return <div key={i} data-grid={this.state.layout[i]}>
+                      return <div key={i}>
                         <VisibilitySensor partialVisibility={true}>
                           {({isVisible}) => {
                             return isVisible ? <Image key={dto.id} dto={dto} size={this.state.imageSize}
