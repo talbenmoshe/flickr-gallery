@@ -2,9 +2,6 @@ import React from 'react';
 import './App.scss';
 import Gallery from '../Gallery';
 
-const WAIT_INTERVAL = 1000;
-const ENTER_KEY = 13;
-
 class App extends React.Component {
   static propTypes = {
   };
@@ -14,28 +11,32 @@ class App extends React.Component {
 
     let last_search = localStorage.getItem('last_search');
     this.state = {
-      value: last_search || '',
-      tag: last_search || ''
+      tag: last_search || 'art'
     };
-    this.timer = null;
   }
 
   handleChange(event) {
-    clearTimeout(this.timer);
-    this.setState({ value: event.target.value });
-    this.timer = setTimeout(::this.triggerChange, WAIT_INTERVAL);
-  }
+    let target = event.target;
+    let tag = target.value;
 
-  handleKeyDown(e) {
-    if (e.keyCode === ENTER_KEY) {
-      ::this.triggerChange();
-    }
-  }
-
-  triggerChange() {
-    let tag = this.state.value;
     localStorage.setItem('last_search', tag);
-    this.setState({tag: tag});
+    this.setState({tag: tag}, () => App.setCaretPosition(target, tag.length));
+  }
+
+  // Credits: http://blog.vishalon.net/index.php/javascript-getting-and-setting-caret-position-in-textarea/
+  static setCaretPosition(ctrl, pos) {
+    // Modern browsers
+    if (ctrl.setSelectionRange) {
+      ctrl.focus();
+      ctrl.setSelectionRange(pos, pos);
+    // IE8 and below
+    } else if (ctrl.createTextRange) {
+      let range = ctrl.createTextRange();
+      range.collapse(true);
+      range.moveEnd('character', pos);
+      range.moveStart('character', pos);
+      range.select();
+    }
   }
 
   render() {
@@ -43,7 +44,7 @@ class App extends React.Component {
       <div className="app-root">
         <div className="app-header">
           <h2>Flickr Gallery</h2>
-          <input className="app-input" onChange={::this.handleChange} onKeyDown={::this.handleKeyDown} value={this.state.value}/>
+          <input className="app-input" onChange={::this.handleChange} value={this.state.tag}/>
         </div>
         <Gallery tag={this.state.tag}/>
       </div>

@@ -8,7 +8,7 @@ import Measure from 'react-measure';
 import InfiniteScroll from 'react-infinite-scroller';
 import RGL, { WidthProvider } from 'react-grid-layout';
 
-Modal.setAppElement('#app');
+Modal.setAppElement('body');
 const ReactGridLayout = WidthProvider(RGL);
 
 class Gallery extends React.Component {
@@ -18,7 +18,6 @@ class Gallery extends React.Component {
 
   constructor(props) {
     super(props);
-    this.queue = {};
     this.state = {
       images: [],
       imageSize: 200,
@@ -26,52 +25,36 @@ class Gallery extends React.Component {
       modalTitle: '',
       modalImage: '',
       modalRotation: 0,
-      loading: false,
-      page: 0,
-      pages: 1,
+      loadMore: false,
+      page: 1,
+      pages: 2,
       columns: 1,
       layout: []
     };
   }
 
   addImages(pages, page, photos) {
-    if (page - 1 !== this.state.page) {
-      this.queue[page] = {pages, photos};
-      return;
-    }
-
     this.setState(prevState => {
       // Append new page items
       let images = prevState.images;
       images.push(...photos);
-      return {images, pages, page};
-    }, () => {
-      let queuedPages = Object.keys(this.queue);
-      queuedPages.sort(function(a, b){return a-b});
-
-      if (queuedPages.length) {
-        let page = queuedPages[0];
-        let pageArgs = this.queue[page];
-        delete this.queue[page];
-        this.addImages(pageArgs.pages, page, pageArgs.photos);
-      }
-
-      this.setState({layout: this.getLayout()});
-    });
+      return {
+        images, pages, page,
+        loadMore: page < pages
+      };
+    }, () => this.setState({layout: this.getLayout()}));
   }
 
   getImages(tag, page) {
     if (!tag) return;
-    this.setState({loading: true});
 
-    flicker.searchByTags(tag, page)
-      .then(({data: {photos: {pages, page, photo}}}) => {
-        this.addImages(pages, page, photo);
-        this.setState({loading: false});
-      })
-      .catch(err => {
-        this.setState({error: err, loading: false});
-      });
+    this.setState({loadMore: false}, () => {
+      flicker.searchByTags(tag, page)
+        .then(({data: {photos: {pages, page, photo}}}) => this.addImages(pages, page, photo))
+        .catch(err => {
+          this.setState({error: err, loadMore: false});
+        });
+    });
   }
 
   deleteImage(image) {
@@ -102,15 +85,21 @@ class Gallery extends React.Component {
     this.setState({modalIsOpen: false});
   }
 
-  loadMore(page) {
-    this.getImages(this.props.tag, page);
+  loadMore() {
+    this.getImages(this.props.tag, this.state.page + 1);
   }
 
   componentWillReceiveProps(props) {
     // Clear images, then get images for the new tags
     this.setState({
-      images: []
-    }, () => this.getImages(props.tag, 1));
+      page: 1,
+      pages: 2,
+      loadMore: false
+    }, () => this.setState({images: []}, () => this.getImages(props.tag, this.state.page)));
+  }
+
+  componentDidMount() {
+    this.getImages(this.props.tag, 1)
   }
 
   getLayout() {
@@ -131,12 +120,12 @@ class Gallery extends React.Component {
   render() {
     return (
       <InfiniteScroll
-        pageStart={0}
-        loadMore={!this.state.loading ? this.loadMore.bind(this) : ()=>{}}
-        hasMore={!this.state.loading && this.state.page < this.state.pages}
+        pageStart={this.state.page}
+        loadMore={this.state.loadMore ? ::this.loadMore : ()=>{}}
+        hasMore={this.state.loadMore}
         loader={<div className="loader" key={0}>Loading ...</div>}
       >
-        <Measure bounds onResize={this.onResize.bind(this)}>
+        <Measure bounds onResize={::this.onResize}>
           {
             ({measureRef}) => {
               return <div ref={measureRef} className="gallery-root">
@@ -152,8 +141,8 @@ class Gallery extends React.Component {
                     this.state.images.map((dto, i) => {
                       return <div key={i} data-grid={this.state.layout[i]}>
                         <Image key={dto.id} dto={dto} size={this.state.imageSize}
-                               onDelete={this.deleteImage.bind(this)}
-                               onExpand={this.onExpand.bind(this)}/>
+                               onDelete={::this.deleteImage}
+                               onExpand={::this.onExpand}/>
                       </div>
                     })
                   }
@@ -161,9 +150,9 @@ class Gallery extends React.Component {
 
                 <Modal
                   isOpen={this.state.modalIsOpen}
-                  onRequestClose={this.closeModal.bind(this)}
+                  onRequestClose={::this.closeModal}
                   contentLabel={this.state.modalTitle}>
-                  <button className="modal-close" onClick={this.closeModal.bind(this)}>x</button>
+                  <button className="modal-close" onClick={::this.closeModal}>x</button>
                   <img src={this.state.modalImage} width="100%" height="100%" style={{
                     transform: `rotate(${this.state.modalRotation}deg)`
                   }}/>

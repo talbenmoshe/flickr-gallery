@@ -50,9 +50,9 @@ class Image extends React.Component {
                transform: `rotate(${this.state.rotation}deg)`
              }}/>
         <div>
-          <FontAwesome className="image-icon" name="sync-alt" title="rotate" onClick={this.onRotate.bind(this)}/>
-          <FontAwesome className="image-icon" name="trash-alt" title="delete" onClick={this.onDelete.bind(this)}/>
-          <FontAwesome className="image-icon" name="expand" title="expand" onClick={this.onExpand.bind(this)}/>
+          <FontAwesome className="image-icon" name="sync-alt" title="rotate" onClick={::this.onRotate}/>
+          <FontAwesome className="image-icon" name="trash-alt" title="delete" onClick={::this.onDelete}/>
+          <FontAwesome className="image-icon" name="expand" title="expand" onClick={::this.onExpand}/>
         </div>
       </div>
     );
