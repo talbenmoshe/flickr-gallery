@@ -118,6 +118,8 @@ class Gallery extends React.Component {
   }
 
   render() {
+    const VisibilitySensor = require('react-visibility-sensor');
+
     return (
       <InfiniteScroll
         pageStart={this.state.page}
@@ -140,9 +142,13 @@ class Gallery extends React.Component {
                   {
                     this.state.images.map((dto, i) => {
                       return <div key={i} data-grid={this.state.layout[i]}>
-                        <Image key={dto.id} dto={dto} size={this.state.imageSize}
-                               onDelete={::this.deleteImage}
-                               onExpand={::this.onExpand}/>
+                        <VisibilitySensor partialVisibility={true}>
+                          {({isVisible}) => {
+                            return isVisible ? <Image key={dto.id} dto={dto} size={this.state.imageSize}
+                                          onDelete={::this.deleteImage}
+                                          onExpand={::this.onExpand}/> : <div></div>
+                          }}
+                        </VisibilitySensor>
                       </div>
                     })
                   }
