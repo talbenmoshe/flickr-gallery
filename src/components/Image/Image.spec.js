@@ -1,19 +1,19 @@
 // import 'jsdom-global/register';
 import React from 'react';
-import {shallow} from 'enzyme';
+import {mount} from 'enzyme';
 import sinon from 'sinon';
 import {expect} from 'chai';
 import Image from './Image.js';
 
 describe('Image', () => {
 
-  const sampleImage = {id: '28420720169', owner: '59717246@N05', secret: 'd460443ecb', server: '4722', farm: 5, rotation:90};
+  const sampleImage = {id: '28420720169', owner: '59717246@N05', secret: 'd460443ecb', server: '4722', farm: 5, rotation: 90};
 
   let wrapper;
   const galleryWidth = 1111;
 
   const mountImage = () => {
-    return shallow(
+    return mount(
       <Image dto={sampleImage} galleryWidth={galleryWidth}/>,
       {lifecycleExperimental: true, attachTo: document.createElement('div')}
     );
