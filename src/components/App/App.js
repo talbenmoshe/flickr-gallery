@@ -1,5 +1,5 @@
 import React from 'react';
-import randomWords from '../../common/RandomWords';
+import {randomWords} from '../../common/RandomWords';
 
 import './App.scss';
 import Gallery from '../Gallery';
