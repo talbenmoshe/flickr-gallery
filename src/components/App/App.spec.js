@@ -25,9 +25,9 @@ describe('App', () => {
 
   it('sets the tag correctly', done => {
     wrapper.setState({
-      tag: 'test1'
+      tagInput: 'test1'
     }, () => {
-      expect(wrapper.find('input').prop('value')).to.eq('test1');
+      expect(wrapper.find('input').prop('value')).to.eq('test1')
       done();
     });
   });
