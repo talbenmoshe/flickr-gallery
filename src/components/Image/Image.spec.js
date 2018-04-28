@@ -7,7 +7,7 @@ import Image from './Image.js';
 
 describe('Image', () => {
 
-  const sampleImage = {id: '28420720169', owner: '59717246@N05', secret: 'd460443ecb', server: '4722', farm: 5};
+  const sampleImage = {id: '28420720169', owner: '59717246@N05', secret: 'd460443ecb', server: '4722', farm: 5, rotation:90};
 
   let wrapper;
   const galleryWidth = 1111;
@@ -39,4 +39,13 @@ describe('Image', () => {
     expect(remainder).to.be.lessThan(1);
   });
 
+  it('roatet image', done => {
+    wrapper.setState({
+      rotation: 180
+    }, () => {
+      let containerStyle = wrapper.find('.image-holder').get(0).props.style;
+      expect(containerStyle).to.have.property('transform', 'rotate(180deg)');
+      done();
+    });
+  });
 });
