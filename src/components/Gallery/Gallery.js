@@ -16,6 +16,7 @@ import Reorder, {
   reorderFromToImmutable
 } from 'react-reorder';
 
+
 class Gallery extends React.Component {
   static propTypes = {
     tag: PropTypes.string

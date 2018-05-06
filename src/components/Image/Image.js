@@ -77,12 +77,11 @@ class Image extends React.Component {
     this.setState({
       from:this.props.index   
     })
-    console.log("Dragged from " + this.state.from );
+    console.log("Dragged from " + this.state.from + '   '+this.state.to);
   }
 
   //function triggered on drop and calls the switch to swap images on the gallery 
-  drop(event){
-    event.preventDefault();
+  drop(){
     console.log("Dropped");
     this.props.switchImages(this.state.from,this.state.to);  
   }
@@ -93,7 +92,8 @@ class Image extends React.Component {
     this.setState({
       to: this.props.index
     })
-    console.log("Over/To " + this.state.to );
+    console.log(this.state.from+"Over/To " + this.state.to );
+
   }
   share(){
     return 'https://farm'+this.props.dto.farm+'staticflickr.com/'+this.props.dto.server+'/'+this.props.dto.id+this.props.dto.secret+'.jpg';
@@ -102,7 +102,7 @@ class Image extends React.Component {
   render() {
     return (
       <div className="image-root" draggable="true" 
-       onDrag={this.drag} 
+       onDragStart ={this.drag} 
        onDragOver={this.dragOver}
        onDrop={this.drop}
 
@@ -120,7 +120,7 @@ class Image extends React.Component {
           <FontAwesome className="image-icon" name="expand" title="expand" onClick={this.expand}/>
           <FacebookProvider appId="575259816194402">
              <Share href={`https://farm${this.props.dto.farm}.staticflickr.com/${this.props.dto.server}/${this.props.dto.id}_${this.props.dto.secret}.jpg`}>
-               <button className="icon-b"><img width="42" height="42" src="http://localhost:8000/components/localImages/share.png" alt="Share with facebook"/></button>
+               <button className="icon-b"><img width="35" height="35" src="http://localhost:8000/components/localImages/share.png" alt="Share with facebook"/></button>
              </Share>
           </FacebookProvider>
         </div>
