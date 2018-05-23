@@ -58,19 +58,12 @@ class Image extends React.Component {
     document.getElementsByClassName('image-root')[this.props.imgIndex].classList.add('rotateImg');
   }
 
-  deleteImg = () => { // need authentication for delete api
-    // fetch('https://api.flickr.com/services/rest/?method=flickr.photos.delete&api_key=2d0066a0ae538617011e54ba902fd4c7&photo_id =' + this.props.dto.id, {
-    //   method: 'POST'
-    // });
-    if (typeof this.props.onExpandImg === 'function') {
-      this.props.onDeleteImg(this.props.dto.id);
-    }
+  deleteImg = () => {
+    this.props.onDeleteImg(this.props.dto.id);
   }
 
   expandImg = () => {
-    if (typeof this.props.onExpandImg === 'function') {
-      this.props.onExpandImg(this.props.dto);
-    }
+    this.props.onExpandImg(this.props.dto);
   }
 
   render() {
