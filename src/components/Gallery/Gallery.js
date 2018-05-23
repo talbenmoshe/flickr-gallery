@@ -16,7 +16,7 @@ class Gallery extends React.Component {
       bigImgPath: null,
       isImgExpanded: false,
       galleryWidth: this.getGalleryWidth(),
-      currentPage: 0,
+      currentPage: 1,
       isLoadMore: false
     };
 
