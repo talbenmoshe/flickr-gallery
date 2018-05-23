@@ -30,7 +30,7 @@ class Gallery extends React.Component {
       this.setState({
         isLoadMore: true
       });
-      if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
+      if ($(window).scrollTop() + $(window).height() > $(document).height() - 20) {
         this.setState({
           currentPage: this.state.currentPage + 1
         });
