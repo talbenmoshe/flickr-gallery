@@ -3,14 +3,25 @@ import './App.scss';
 import Gallery from '../Gallery';
 
 class App extends React.Component {
-  static propTypes = {
-  };
+  static propTypes = {};
 
   constructor() {
     super();
-    this.state = {
-      tag: 'art'
-    };
+
+    if (localStorage.getItem('lastSearch') !== null) {
+      this.state = {
+        tag: localStorage.getItem('lastSearch')
+      };
+    } else {
+      this.state = {
+        tag: 'art'
+      };
+    }
+  }
+
+  onChangeHandler = (event) => {
+    this.setState({tag: event.target.value});
+    localStorage.setItem('lastSearch', event.target.value);
   }
 
   render() {
@@ -18,7 +29,8 @@ class App extends React.Component {
       <div className="app-root">
         <div className="app-header">
           <h2>Flickr Gallery</h2>
-          <input className="app-input" onChange={event => this.setState({tag: event.target.value})} value={this.state.tag}/>
+          <input className="app-input" onChange={this.onChangeHandler}
+                 value={this.state.tag}/>
         </div>
         <Gallery tag={this.state.tag}/>
       </div>

@@ -12,3 +12,19 @@
 .gallery-intro {
   font-size: 15pt;
 }
+
+.big-img {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
