@@ -114,9 +114,6 @@ class Gallery extends React.Component {
           return <Image key={'image-' + dto.id} dto={dto} galleryWidth={this.state.galleryWidth}
                         onExpandImg={this.expandImg} onDeleteImg={this.deleteImg} imgIndex={index}/>
         })}
-
-
-        
       </div>
     );
   }
