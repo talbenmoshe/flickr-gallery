@@ -91,6 +91,12 @@ class Gallery extends React.Component {
     });
   }
 
+  deleteImg = (id) => {
+    this.setState({
+      images: this.state.images.filter(item => item.id !== id)
+    });
+  }
+
   hideBigImg = () => {
     this.setState({
       isImgExpanded: false
@@ -106,7 +112,7 @@ class Gallery extends React.Component {
 
         {this.state.images.map((dto, index) => {
           return <Image key={'image-' + dto.id} dto={dto} galleryWidth={this.state.galleryWidth}
-                        onExpandImg={this.expandImg} imgIndex={index}/>
+                        onExpandImg={this.expandImg} onDeleteImg={this.deleteImg} imgIndex={index}/>
         })}
       </div>
     );

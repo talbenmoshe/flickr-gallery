@@ -9,7 +9,8 @@ class Image extends React.Component {
     dto: PropTypes.object,
     galleryWidth: PropTypes.number,
     imgIndex: PropTypes.number,
-    onExpandImg: React.PropTypes.func
+    onExpandImg: React.PropTypes.func,
+    onDeleteImg: React.PropTypes.func
   };
 
   constructor(props) {
@@ -58,9 +59,12 @@ class Image extends React.Component {
   }
 
   deleteImg = () => { // need authentication for delete api
-    fetch('https://api.flickr.com/services/rest/?method=flickr.photos.delete&api_key=2d0066a0ae538617011e54ba902fd4c7&photo_id =' + this.props.dto.id, {
-      method: 'POST'
-    });
+    // fetch('https://api.flickr.com/services/rest/?method=flickr.photos.delete&api_key=2d0066a0ae538617011e54ba902fd4c7&photo_id =' + this.props.dto.id, {
+    //   method: 'POST'
+    // });
+    if (typeof this.props.onExpandImg === 'function') {
+      this.props.onDeleteImg(this.props.dto.id);
+    }
   }
 
   expandImg = () => {
