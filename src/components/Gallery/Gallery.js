@@ -72,7 +72,7 @@ class Gallery extends React.Component {
   }
 
   loadMorePhotos() {
-    // load more photos in on scroll
+    // load more photos on scroll
     this.getImages(this.props.tag, this.state.page + 1)
   }
 
@@ -170,6 +170,7 @@ class Gallery extends React.Component {
                   rowHeight={this.state.imageSize}
                   items={this.state.images.length}
                   cols={this.state.columns}
+                  draggableCancel='input'
                 >
                   {this.state.images.map((dto, index) => {
                     return <div className="gallary-img" key={index} >
