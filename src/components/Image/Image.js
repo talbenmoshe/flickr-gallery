@@ -28,6 +28,7 @@ class Image extends React.Component {
   deleteImage(e) {
     // send the clicked image index to Gallary to be deleted
     e.preventDefault()
+    this.setState({rotationValue: 0})
     this.props.onDelete(this.props.index)
   }
 

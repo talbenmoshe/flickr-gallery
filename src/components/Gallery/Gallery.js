@@ -166,11 +166,14 @@ class Gallery extends React.Component {
                 <ReactGridLayout
                   className="c-grid-layout"
                   margin={[10, 10]}
+                  containerPadding={[5, 5]}
                   layout={this.state.layout}
                   rowHeight={this.state.imageSize}
                   items={this.state.images.length}
                   cols={this.state.columns}
-                  draggableCancel='input'
+                  verticalCompact={true}
+                  compactType='horizontal'
+                  useCSSTransforms={true}
                 >
                   {this.state.images.map((dto, index) => {
                     return <div className="gallary-img" key={index} >
