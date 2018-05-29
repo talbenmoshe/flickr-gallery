@@ -14,14 +14,6 @@ class Image extends React.Component {
 
   constructor(props) {
     super(props);
-    this.delete= this.delete.bind(this);
-    this.rotate = this.rotate.bind(this);
-    this.expand = this.expand.bind(this);
-    this.drag = this.drag.bind(this);
-    this.dragOver= this.dragOver.bind(this);
-    this.drop = this.drop.bind(this);
-    this.share = this.share.bind(this);
-    this.calcImageSize = this.calcImageSize.bind(this);
 
     this.state = {
       from:0,
@@ -29,6 +21,12 @@ class Image extends React.Component {
       rotation: 0,
       size: 200
     };
+
+    this.rotate = this.rotate.bind(this);
+    this.drag = this.drag.bind(this);
+    this.dragOver= this.dragOver.bind(this);
+    this.drop = this.drop.bind(this);
+    this.calcImageSize = this.calcImageSize.bind(this);
   }
 
   calcImageSize() {
@@ -49,11 +47,6 @@ class Image extends React.Component {
     return `https://farm${dto.farm}.staticflickr.com/${dto.server}/${dto.id}_${dto.secret}.jpg`;
   }
   
-  //The function calls the parent deleteFromGallery function and pass the index of image to remove
-  delete(){
-    //console.log('removed'+this.props.index);
-    this.props.deleteFromGallery(this.props.index); 
-  }
 
   //function rotate trigggerd on click increases the rotation of each image component by 90 deg
   rotate(){
@@ -62,43 +55,30 @@ class Image extends React.Component {
     if(newRotation >= 360){
       newRotation =-360;
     }
-    this.setState({
-      rotation: newRotation,
-    })
+    this.setState({rotation: newRotation});
   }
-  //function calls the expand of gallery that is passed in as a prop
-  expand(){
-    this.props.expand(this.props.index);
-    //console.log(this.props.image.toString);
-  }
-
+  
   //function triggered on drag and stores the dragged image index as from
-  drag() { 
-    this.setState({
-      from:this.props.index   
-    })
-    console.log("Dragged from " + this.state.from + '   '+this.state.to);
-  }
+  drag=()=> { 
+             this.setState({from:this.props.index});
+             console.log("Dragged from " + this.state.from + '   '+this.state.to);
+            }
 
   //function triggered on drop and calls the switch to swap images on the gallery 
-  drop(){
-    console.log("Dropped");
-    this.props.switchImages(this.state.from,this.state.to);  
-  }
+  drop=()=> {
+            console.log("Dropped");
+             this.props.switchImages(this.state.from,this.state.to);  
+            }
 
   //function triggered on dragOver event and stores the dest image index as to
-  dragOver(event){
-    event.preventDefault();
-    this.setState({
-      to: this.props.index
-    })
-    console.log(this.state.from+"Over/To " + this.state.to );
-
-  }
-  share(){
-    return 'https://farm'+this.props.dto.farm+'staticflickr.com/'+this.props.dto.server+'/'+this.props.dto.id+this.props.dto.secret+'.jpg';
+  dragOver=(event)=>{
+          event.preventDefault();
+          this.setState({
+            to: this.props.index
+          })
+          console.log(this.state.from+"Over/To " + this.state.to );
+        }
   
-  }
   render() {
     return (
       <div className="image-root" draggable="true" 
@@ -116,12 +96,13 @@ class Image extends React.Component {
         >
         <div>
           <FontAwesome className="image-icon" name="sync-alt" title="rotate" onClick={this.rotate}/>
-          <FontAwesome className="image-icon" name="trash-alt" title="delete" onClick={this.delete} />
-          <FontAwesome className="image-icon" name="expand" title="expand" onClick={this.expand}/>
+          <FontAwesome className="image-icon" name="trash-alt" title="delete" onClick={this.props.deleteFromGallery} />
+          <FontAwesome className="image-icon" name="expand" title="expand" onClick={this.props.expand}/>
+
           <FacebookProvider appId="575259816194402">
-             <Share href={`https://farm${this.props.dto.farm}.staticflickr.com/${this.props.dto.server}/${this.props.dto.id}_${this.props.dto.secret}.jpg`}>
-               <button className="icon-b"><img width="35" height="35" src="http://localhost:8000/components/localImages/share.png" alt="Share with facebook"/></button>
-             </Share>
+            <Share href={`https://farm${this.props.dto.farm}.staticflickr.com/${this.props.dto.server}/${this.props.dto.id}_${this.props.dto.secret}.jpg`}>
+              <button className="icon-b"><img width="35" height="35" src="http://localhost:8000/components/localImages/share.png" alt="Share with facebook"/></button>
+            </Share>
           </FacebookProvider>
         </div>
         
