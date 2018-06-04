@@ -11,10 +11,11 @@ describe('Image', () => {
 
   let wrapper;
   const galleryWidth = 1111;
+  const imageSize = 200;
 
   const mountImage = () => {
     return shallow(
-      <Image dto={sampleImage} galleryWidth={galleryWidth}/>,
+      <Image dto={sampleImage} galleryWidth={galleryWidth} imageSize={imageSize}/>,
       {lifecycleExperimental: true, attachTo: document.createElement('div')}
     );
   };

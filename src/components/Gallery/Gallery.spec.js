@@ -46,7 +46,7 @@ describe('Gallery', () => {
     wrapper.setState({
       images: initialImages
     }, () => {
-      expect(wrapper.children().children().length).to.eq(initialImages.length);
+      expect(wrapper.children().children().children().children().children().length).to.eq(initialImages.length);
       done();
     });
   });
