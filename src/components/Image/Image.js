@@ -15,7 +15,8 @@ class Image extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rotation: 0
+      rotation: 0,
+      imageSize: this.props.imageSize
     };
   }
 

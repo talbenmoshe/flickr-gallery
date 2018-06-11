@@ -35,7 +35,7 @@ describe('Image', () => {
   });
 
   it('calculate image size correctly', () => {
-    const imageSize = wrapper.state().size;
+    const imageSize = wrapper.state().imageSize;
     const remainder = galleryWidth % imageSize;
     expect(remainder).to.be.lessThan(1);
   });
