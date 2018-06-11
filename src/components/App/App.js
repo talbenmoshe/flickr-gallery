@@ -8,8 +8,13 @@ class App extends React.Component {
 
   constructor() {
     super();
+    let tag = 'art';
+    let lastSearch = localStorage.getItem('lastSearch');
+    if (lastSearch && lastSearch != '') {
+      tag = lastSearch;
+    }
     this.state = {
-      tag: 'art'
+      tag: tag
     };
   }
 
