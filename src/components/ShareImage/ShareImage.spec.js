@@ -6,11 +6,10 @@ import ShareImage from './ShareImage.js';
 describe('ShareImage', () => {
 
   const imageUrl = 'https://farm1.staticflickr.com/878/41398916355_fbd5bf1b7b.jpg';
-  const iconSize = 32;
-
+  let wrapper;
   const mountShareImage = () => {
     return shallow(
-      <ShareImage url={imageUrl} iconSize={iconSize}/>,
+      <ShareImage url={imageUrl} iconSize={32}/>,
       {lifecycleExperimental: true, attachTo: document.createElement('div')}
     );
   };

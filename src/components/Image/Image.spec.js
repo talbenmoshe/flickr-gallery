@@ -1,7 +1,6 @@
 // import 'jsdom-global/register';
 import React from 'react';
 import {shallow} from 'enzyme';
-import sinon from 'sinon';
 import {expect} from 'chai';
 import Image from './Image.js';
 
