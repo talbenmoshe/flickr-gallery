@@ -7,7 +7,7 @@ import {
   TwitterShareButton,
   TwitterIcon,
   TumblrShareButton,
-  TumblrIcon,
+  TumblrIcon
 } from 'react-share';
 
 class ShareImage extends React.Component {

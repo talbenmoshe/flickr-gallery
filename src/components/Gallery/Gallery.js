@@ -10,6 +10,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 import Lightbox from 'react-image-lightbox';
 import 'react-image-lightbox/style.css';
 import ShareImage from '../ShareImage';
+import {debounce} from 'throttle-debounce';
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -37,6 +38,7 @@ class Gallery extends React.Component {
     this.loadMorePhotos = this.loadMorePhotos.bind(this);
     this.onScreenResize = this.onScreenResize.bind(this);
     this.viewImageInLightbox = this.viewImageInLightbox.bind(this);
+    this.getImages = debounce(2000, this.getImages);
   }
 
   getGalleryWidth(){
@@ -50,7 +52,6 @@ class Gallery extends React.Component {
   getImages(tag, page) {
     //save last search to local storage
     localStorage.setItem('lastSearch', tag);
-
     const self = this;
     const apiKey = 'bb358062f623905b881c07cad117a097';
     const url = `https://api.flickr.com/services/rest/?api_key=${apiKey}&method=flickr.photos.search&tag_mode=all&format=json&nojsoncallback=1&tags=${tag}&page=${page}&per_page=${this.state.imagesCountPerPage}&extras=owner_name`
@@ -76,7 +77,7 @@ class Gallery extends React.Component {
         });
       }
       
-    }).catch(err => {
+    }).catch(() => {
       //handle error
     })
 
@@ -194,12 +195,12 @@ class Gallery extends React.Component {
             toolbarButtons={[<ShareImage url={this.urlFromDto(images[photoIndex])} iconSize={32} />]}
             onMovePrevRequest={() =>
               this.setState({
-                photoIndex: (photoIndex + images.length - 1) % images.length,
+                photoIndex: (photoIndex + images.length - 1) % images.length
               })
             }
             onMoveNextRequest={() =>
               this.setState({
-                photoIndex: (photoIndex + 1) % images.length,
+                photoIndex: (photoIndex + 1) % images.length
               })
             }
           />

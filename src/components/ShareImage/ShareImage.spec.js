@@ -1,7 +1,5 @@
-// import 'jsdom-global/register';
 import React from 'react';
 import {shallow} from 'enzyme';
-import sinon from 'sinon';
 import {expect} from 'chai';
 import ShareImage from './ShareImage.js';
 
@@ -25,8 +23,8 @@ describe('ShareImage', () => {
     expect(wrapper).to.not.be.undefined;
   });
   //as for now only 3 buttons implemented and always added to view.
-  it('renders all images on the state', done => {
-      expect(wrapper.children().children().length).to.eq(3);
+  it('make sure all the share buttons well rendered', done => {
+      expect(wrapper.children().length).to.eq(3);
       done();
   });
 
