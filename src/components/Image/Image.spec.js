@@ -10,7 +10,7 @@ describe('Image', () => {
   const sampleImage = {id: '28420720169', owner: '59717246@N05', secret: 'd460443ecb', server: '4722', farm: 5};
 
   let wrapper;
-  const galleryWidth = 1111;
+  const galleryWidth = 1000;
   const imageSize = 200;
 
   const mountImage = () => {
