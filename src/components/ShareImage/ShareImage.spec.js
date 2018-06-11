@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallow} from 'enzyme';
 import {expect} from 'chai';
-import ShareImage from './ShareImage.js';
+import './ShareImage.scss';
 
 describe('ShareImage', () => {
 
