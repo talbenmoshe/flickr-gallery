@@ -6,7 +6,8 @@ import './Image.scss';
 class Image extends React.Component {
   static propTypes = {
     dto: PropTypes.object,
-    galleryWidth: PropTypes.number
+    galleryWidth: PropTypes.number,
+    deleteAction: PropTypes.func
   };
 
   constructor(props) {
@@ -18,7 +19,7 @@ class Image extends React.Component {
       expandClass: ''
     };
     this.rotateImage = this.rotateImage.bind(this);
-/*    this.deleteImage = this.deleteImage.bind(this);*/
+    this.deleteImage = this.deleteImage.bind(this);
     this.expandImage = this.expandImage.bind(this);
   }
 
@@ -46,7 +47,7 @@ class Image extends React.Component {
   }
 
   deleteImage() {
-    console.log(this);
+    this.props.deleteAction(this.props.dto);
   }
 
   expandImage() {
