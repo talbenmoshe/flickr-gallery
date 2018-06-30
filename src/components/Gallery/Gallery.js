@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Image from '../Image';
+import Flicker from '../Flicker';
 import './Gallery.scss';
 
 class Gallery extends React.Component {
@@ -25,7 +26,12 @@ class Gallery extends React.Component {
   }
 
   getImages(tag) {
-    // TODO: Get images from Flickr
+    var that = this;
+    Flicker.getImages(tag).then(function (response) {
+      that.setState({images: response.data.photos.photo});
+    }).catch(function (error) {
+
+    });
   }
 
   componentDidMount() {
