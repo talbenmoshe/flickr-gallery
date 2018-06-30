@@ -14,7 +14,8 @@ class Image extends React.Component {
     this.calcImageSize = this.calcImageSize.bind(this);
     this.state = {
       size: 200,
-      rotation: 0
+      rotation: 0,
+      expandClass: ''
     };
     this.rotateImage = this.rotateImage.bind(this);
 /*    this.deleteImage = this.deleteImage.bind(this);*/
@@ -49,23 +50,28 @@ class Image extends React.Component {
   }
 
   expandImage() {
-    console.log(this);
+      this.setState({
+        expandClass : (this.state.expandClass == '') ? 'expanded' : ''
+      })
   }
 
   render() {
     return (
       <div
-        className="image-root"
+        className={`image-root ${this.state.expandClass}`}
         style={{
           width: this.state.size + 'px',
           height: this.state.size + 'px',
         }}
         >
+        <FontAwesome className="image-icon close-btn" onClick={this.expandImage} name="times-circle" title="close"/>
         <span
-          className='img-container'
+          className = "img-container"
           style ={{
             backgroundImage: `url(${this.urlFromDto(this.props.dto)})`,
-            transform: 'rotate(' + this.state.rotation + 'deg)'
+            transform: 'rotate(' + this.state.rotation + 'deg)',
+            width: this.state.size + 'px',
+            height: this.state.size + 'px',
           }}
         />
         <div>
