@@ -6,7 +6,7 @@
   box-sizing: border-box;
   position: relative;
   border: 1px solid white;
-
+  z-index: 10;
   > div {
     visibility: hidden;
     background: rgba(0, 0, 0, 0.7);
@@ -40,11 +40,52 @@
     cursor: pointer;
     padding: 12px;
     margin: 3px;
+    &.close-btn {
+      border: none;
+      border-radius: 0px;
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      margin: 0px;
+      visibility: hidden;
+    }
 
     &:hover {
       color: white;
       border-color: white;
     }
+  }
+  &.expanded {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, .5);
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 100;
+    .img-container {
+      top: 50%;
+      left: 50%;
+      padding: 20%;
+      transform: translateX(-50%) translateY(-50%) !important;
+      z-index: 999;
+    }
+    &:hover > div {
+      visibility: hidden;
+    }
+    .image-icon{
+      &.close-btn {
+        visibility: visible;
+      }
+    }
+  }
+
+  .img-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 }
 
