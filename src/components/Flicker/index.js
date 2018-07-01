@@ -21,13 +21,14 @@ export default {
         })
     }
   },
-  getImages: function (tag) {
+  getImages: function (tag, page) {
     return this.sendRequest('', this.GET_METHOD, {
       method: 'flickr.photos.search',
       api_key: this.flickerAPIParams.apiKey,
       format: this.flickerAPIParams.format,
       nojsoncallback: 1,
-      tags: tag
+      tags: tag,
+      page: page
     });
   }
 }

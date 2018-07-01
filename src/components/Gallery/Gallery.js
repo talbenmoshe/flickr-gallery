@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Image from '../Image';
 import Flicker from '../Flicker';
 import './Gallery.scss';
+import InfiniteScroll from 'react-infinite-scroller';
 
 class Gallery extends React.Component {
   static propTypes = {
@@ -13,7 +14,9 @@ class Gallery extends React.Component {
     super(props);
     this.state = {
       images: [],
-      galleryWidth: this.getGalleryWidth()
+      galleryWidth: this.getGalleryWidth(),
+      page: 1,
+      pages: 1
     };
     this.deleteImageFromGallery = this.deleteImageFromGallery.bind(this);
   }
@@ -26,17 +29,23 @@ class Gallery extends React.Component {
     }
   }
 
-  getImages(tag) {
+  getImages(tag, page) {
     var that = this;
-    Flicker.getImages(tag).then(function (response) {
-      that.setState({images: response.data.photos.photo});
+    Flicker.getImages(tag, page).then(function (response) {
+      let images = [];
+      if (page > 1) {
+        images = that.state.images.concat(response.data.photos.photo)
+      } else {
+        images = response.data.photos.photo;
+      }
+      that.setState({images: images, pages: response.data.photos.pages});
     }).catch(function (error) {
 
     });
   }
 
   componentDidMount() {
-    this.getImages(this.props.tag);
+    this.getImages(this.props.tag, 1);
     this.setState({
       galleryWidth: document.body.clientWidth
     });
@@ -49,20 +58,30 @@ class Gallery extends React.Component {
   }
 
   componentWillReceiveProps(props) {
-    this.getImages(props.tag);
+    this.getImages(props.tag, 1);
   }
 
   resize(){
     this.setState({galleryWidth: this.getGalleryWidth()})
   }
 
+  loadNewPage(page) {
+    this.getImages(this.props.tag, page)
+  }
+
   render() {
     return (
-      <div className="gallery-root">
-        {this.state.images.map(dto => {
-          return <Image  key={'image-' + dto.id} dto={dto} deleteAction={this.deleteImageFromGallery} galleryWidth={this.state.galleryWidth}/>;
-        })}
-      </div>
+      <InfiniteScroll
+        pageStart={1}
+        loadMore={this.loadNewPage.bind(this)}
+        hasMore={this.state.page < this.state.pages}
+        loader={<div className="loader" key={1}>Loading ...</div>} >
+          <div className="gallery-root">
+            {this.state.images.map(dto => {
+              return <Image  key={'image-' + dto.id} dto={dto} deleteAction={this.deleteImageFromGallery} galleryWidth={this.state.galleryWidth}/>;
+            })}
+          </div>
+      </InfiniteScroll>
     );
   }
 }
