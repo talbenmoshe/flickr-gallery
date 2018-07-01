@@ -40,6 +40,7 @@ class Gallery extends React.Component {
     this.setState({
       galleryWidth: document.body.clientWidth
     });
+    window.addEventListener("resize", this.resize.bind(this));
   }
 
   deleteImageFromGallery(dto) {
@@ -51,11 +52,15 @@ class Gallery extends React.Component {
     this.getImages(props.tag);
   }
 
+  resize(){
+    this.setState({galleryWidth: this.getGalleryWidth()})
+  }
+
   render() {
     return (
       <div className="gallery-root">
         {this.state.images.map(dto => {
-          return <Image key={'image-' + dto.id} dto={dto} deleteAction={this.deleteImageFromGallery} galleryWidth={this.state.galleryWidth}/>;
+          return <Image  key={'image-' + dto.id} dto={dto} deleteAction={this.deleteImageFromGallery} galleryWidth={this.state.galleryWidth}/>;
         })}
       </div>
     );

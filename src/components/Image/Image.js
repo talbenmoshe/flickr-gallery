@@ -33,6 +33,10 @@ class Image extends React.Component {
     });
   }
 
+  componentWillReceiveProps() {
+    this.calcImageSize();
+  }
+
   componentDidMount() {
     this.calcImageSize();
   }
